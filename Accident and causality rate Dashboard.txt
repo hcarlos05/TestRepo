@@ -1,0 +1,125 @@
+Accident and causality rate Dashboard
+
+Total Accident = 
+ COUNTROWS(FactTable
+ )
+ 
+ Title Weekday = 
+VAR Selected_M=SELECTEDVALUE('Switch Table'[Value])
+RETURN
+Selected_M&" "&" by Weekday"
+
+Title Month = 
+VAR Selected_M=SELECTEDVALUE('Switch Table'[Value])
+RETURN
+Selected_M&" "&" by Month"
+
+Title Contributor = 
+VAR Selected_M=SELECTEDVALUE('Switch Table'[Value])
+RETURN
+Selected_M&" "&" by Contributing Factor" 
+
+Title % PM = 
+VAR Selected_M=SELECTEDVALUE('Switch Table'[Value])
+RETURN
+Selected_M&" "&" by at PM"
+
+Title % AM = 
+VAR Selected_M=SELECTEDVALUE('Switch Table'[Value])
+RETURN
+Selected_M&" "&" by at AM"
+
+Time Range Title = 
+VAR Moment_Select=SELECTEDVALUE(FactTable[Moment])
+VAR Current_Measures=SELECTEDVALUE('Switch Table'[Value])
+VAR Year_Selected=SELECTEDVALUE(CalendarTable[Year])
+
+RETURN
+IF(Moment_Select=BLANK(), "All time range", Current_Measures&" 
+between 1-12 "&Moment_Select&" in "&Year_Selected
+)
+
+Persons Killed = 
+SUM(
+    FactTable[Persons Killed])
+	
+Persons Injured = 
+SUM(FactTable[Persons Injured])
+
+Pedestrians Killed = 
+SUM(
+    FactTable[Pedestrians Killed])
+	
+Motorist Killed = 
+SUM(
+    FactTable[Motorist Killed])
+
+Injured Pedestrians = 
+SUM(
+    FactTable[Pedestrians Injured])
+
+Injured Motorist = 
+SUM(FactTable[Motorist Injured]
+)
+
+Injured Cyclist = 
+SUM(FactTable[Cyclist Injured])
+
+Info = 
+VAR Select_CM=SELECTEDVALUE('Switch Table'[Value])
+VAR Measure_value=[Measure Selected]
+RETURN
+"There are "&FORMAT(Measure_value,"#,##")&" "&Select_CM
+
+Cyclist Killed = 
+SUM(
+    FactTable[Cyclist Killed])
+
+% PM = 
+VAR PickedMeasure=[Measure Selected]
+VAR AM_Moment=CALCULATE([Measure Selected], FILTER(FactTable, 
+FactTable[Moment]="PM")
+)
+
+RETURN
+DIVIDE(AM_Moment, PickedMeasure,0)
+
+% AM = 
+VAR PickedMeasure=[Measure Selected]
+VAR AM_Moment=CALCULATE([Measure Selected], FILTER(FactTable, 
+FactTable[Moment]="AM")
+)
+
+RETURN
+DIVIDE(AM_Moment, PickedMeasure,0)
+
+Measure Selected = 
+SWITCH(TRUE(),
+[Select]="Cycle Killed",[Cyclist Killed],
+[Select]="Injured Cyclist",[Injured Cyclist],
+[Select]="Injured Motorist",[Injured Motorist],
+[Select]="Injured Pedestrians",[Injured Pedestrians],
+[Select]="Motorist Killed",[Motorist Killed],
+[Select]="Pedestrians Killed",[Pedestrians Killed],
+[Select]="Persons Injured",[Persons Injured],
+[Select]="Persons Killed",[Persons Killed],
+[Select]="Total Accident",[Total Accident]
+)
+
+Select = 
+ VAR Measure_Select=SELECTEDVALUE('Switch Table'[Value])
+ RETURN
+ Measure_Select
+ 
+ Switch Table = 
+ {
+"Cycle Killed",
+"Injured Cyclist",
+"Injured Motorist",
+"Injured Pedestrians",
+"Motorist Killed",
+"Pedestrians Killed",
+"Persons Injured",
+"Persons Killed",
+"Total Accident"
+ }
